@@ -12,10 +12,11 @@ import java.util.Properties;
 public class DB {
 
 	private static Connection conn = null;
-
+	//This method starts the connection
 	public static Connection getConnection() {
 		if (conn == null) {
 			try {
+				//this line loads the properties
 				Properties props = loadProperties();
 				String url = props.getProperty("dburl");
 				conn = DriverManager.getConnection(url, props);
@@ -25,7 +26,7 @@ public class DB {
 		}
 		return conn;
 	}
-
+	//This one we call to close
 	public static void closeConnection() {
 		if (conn != null) {
 			try {
@@ -35,7 +36,7 @@ public class DB {
 			}
 		}
 	}
-
+	//This method gets the information from the db.properties file
 	private static Properties loadProperties() {
 		try (FileInputStream fs = new FileInputStream("db.properties")) {
 			Properties props = new Properties();
