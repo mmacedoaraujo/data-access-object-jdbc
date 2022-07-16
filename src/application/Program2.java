@@ -1,5 +1,6 @@
 package application;
 
+import java.util.List;
 import java.util.Scanner;
 
 import model.dao.DaoFactory;
@@ -31,5 +32,10 @@ public class Program2 {
 		System.out.println("\n------TEST 4 - findById method ------");
 		newDepartment = departmentDao.findByID(4);
 		System.out.println(newDepartment);
+		
+		System.out.println("\n------TEST 5 - findAll method ------");
+		List<Department> list = departmentDao.findAll();
+		
+		list.forEach(System.out::println);
 	}
 }

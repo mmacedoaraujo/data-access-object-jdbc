@@ -162,7 +162,7 @@ public class SellerDaoJdbc implements SellerDao {
 			rs = st.executeQuery();
 
 			List<Seller> list = new ArrayList<>();
-			// making a hasmap to ensure that each seller is linked to the same department
+			// making a hashmap to ensure that each seller is linked to the same department
 			// instance
 			Map<Integer, Department> map = new HashMap<>();
 
