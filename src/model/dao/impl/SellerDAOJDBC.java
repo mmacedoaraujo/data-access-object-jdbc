@@ -1,7 +1,6 @@
 package model.dao.impl;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,15 +12,15 @@ import java.util.Map;
 
 import db.DB;
 import db.DbException;
-import model.dao.SellerDAO;
+import model.dao.SellerDao;
 import model.entities.Department;
 import model.entities.Seller;
 
-public class SellerDAOJDBC implements SellerDAO {
+public class SellerDaoJdbc implements SellerDao {
 
 	private Connection conn;
 
-	public SellerDAOJDBC(Connection conn) {
+	public SellerDaoJdbc(Connection conn) {
 		this.conn = conn;
 	}
 
