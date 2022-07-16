@@ -18,7 +18,7 @@ import model.entities.Department;
 import model.entities.Seller;
 
 public class SellerDAOJDBC implements SellerDAO {
-	
+
 	private Connection conn;
 
 	public SellerDAOJDBC(Connection conn) {
@@ -29,34 +29,31 @@ public class SellerDAOJDBC implements SellerDAO {
 	public void insert(Seller obj) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
-		
+
 		try {
-			st = conn.prepareStatement("INSERT INTO seller "
-					+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
-					+"VALUES "
-					+"(?, ?, ?, ?, ?)",
-					Statement.RETURN_GENERATED_KEYS);
-			
+			st = conn.prepareStatement("INSERT INTO seller " + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+					+ "VALUES " + "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
 			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
 			st.setDouble(4, obj.getBaseSalary());
 			st.setInt(5, obj.getDepartment().getId());
-			
+
 			int rowsAffected = st.executeUpdate();
-			
+
 			if (rowsAffected > 0) {
 				rs = st.getGeneratedKeys();
-				if(rs.next()) {
+				if (rs.next()) {
 					int id = rs.getInt(1);
 					obj.setId(id);
 				}
-			}else {
+			} else {
 				throw new DbException("Unexpected error! No rows affected!");
 			}
-		}catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
-		}finally {
+		} finally {
 			DB.closeResultSet(rs);
 			DB.closeStatement(st);
 		}
@@ -65,26 +62,23 @@ public class SellerDAOJDBC implements SellerDAO {
 
 	@Override
 	public void update(Seller obj) {
-		PreparedStatement st = null;		
-		try  {
-			st = conn.prepareStatement(
-					"UPDATE seller "
-					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? "
-					+ "WHERE Id = ? " );
-			
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("UPDATE seller "
+					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " + "WHERE Id = ? ");
+
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
 			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
 			st.setDouble(4, obj.getBaseSalary());
 			st.setInt(5, obj.getDepartment().getId());
 			st.setInt(6, obj.getId());
-			
+
 			st.executeUpdate();
-			
-			
-		}catch (SQLException e) {
+
+		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
-		}finally {
+		} finally {
 			DB.closeStatement(st);
 		}
 
@@ -92,7 +86,23 @@ public class SellerDAOJDBC implements SellerDAO {
 
 	@Override
 	public void deleteByID(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM seller " + "WHERE id = ? ");
+
+			st.setInt(1, id);
+
+			int rows = st.executeUpdate();
+			
+			if (rows == 0) {
+				throw new DbException("You have entered an invalid id!");
+			}
+			
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
@@ -145,26 +155,27 @@ public class SellerDAOJDBC implements SellerDAO {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			//passing the sql instructions
+			// passing the sql instructions
 			st = conn.prepareStatement(
 					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
 							+ "ON seller.DepartmentId = department.Id " + "ORDER BY Name");
 
 			rs = st.executeQuery();
-			
+
 			List<Seller> list = new ArrayList<>();
-			//making a hasmap to ensure that each seller is linked to the same department instance
+			// making a hasmap to ensure that each seller is linked to the same department
+			// instance
 			Map<Integer, Department> map = new HashMap<>();
 
 			while (rs.next()) {
-				//checking if the department already exists to not duplicate it
+				// checking if the department already exists to not duplicate it
 				Department dep = map.get(rs.getInt("DepartmentId"));
-				
+
 				if (dep == null) {
 					dep = instantiateDepartment(rs);
 					map.put(rs.getInt("DepartmentId"), dep);
 				}
-				//adding the sellers to the list
+				// adding the sellers to the list
 				Seller obj = instantiateSeller(rs, dep);
 				list.add(obj);
 			}
