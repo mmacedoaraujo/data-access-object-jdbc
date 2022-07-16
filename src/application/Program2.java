@@ -27,5 +27,9 @@ public class Program2 {
 		newDepartment.setName("Comics");
 		departmentDao.update(newDepartment);
 		System.out.println("Update completed!");
+		
+		System.out.println("\n------TEST 4 - findById method ------");
+		newDepartment = departmentDao.findByID(4);
+		System.out.println(newDepartment);
 	}
 }
